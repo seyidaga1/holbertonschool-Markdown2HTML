@@ -11,6 +11,22 @@ Usage:
 
 import sys
 
+def convert_unordered_list(line,in_list):
+    
+    ul_line = ""
+    if line.startswith("-") :
+        unordered_list = line.strip("-")
+        if not in_list :
+            ul_line+="<ul>\n"
+            in_list = True
+        ul_line+=f"\t<li>{unordered_list.strip()}</li>\n"
+        return ul_line
+    else :
+        ul_line+="</ul>\n"
+        in_list = False
+
+    return line
+
 
 def convert_heading(line):
     if line.startswith("#"):
@@ -18,6 +34,7 @@ def convert_heading(line):
         heading_text = line.strip("# ").strip()
         heading = f"<h{heading_level}>{heading_text}</h{heading_level}>"
         return heading
+    return line
 
 
 def markdown_file(name, output):
@@ -26,9 +43,10 @@ def markdown_file(name, output):
             markdown_lines = file.readlines()
 
         converted_lines = []
+        in_list = False
         for line in markdown_lines:
             converted_line = convert_heading(line)
-            # converted_line = convert_unordered_list(converted_line)
+            converted_line = convert_unordered_list(converted_line,in_list)
             converted_lines.append(f"{converted_line}\n")
 
         with open(output, 'w') as file:
