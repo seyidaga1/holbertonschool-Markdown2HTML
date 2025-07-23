@@ -36,7 +36,7 @@ def markdown_file(name,output) :
                 file.write(line) 
 
     except FileNotFoundError:
-        sys.stderr.write(f"There is no such file that named : {name}")
+        sys.stderr.write(f"Missing {name}\n")
 
 
 
