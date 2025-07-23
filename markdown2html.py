@@ -17,7 +17,6 @@ def convert_heading(line):
         heading_level = line.count("#")
         heading_text = line.strip("# ").strip()
         heading = f"<h{heading_level}>{heading_text}</h{heading_level}>"
-        print(heading)
         return heading
 
 
