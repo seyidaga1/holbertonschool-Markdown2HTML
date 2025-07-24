@@ -11,22 +11,20 @@ Usage:
 
 import sys
 
-def convert_unordered_list(line,in_list):
-    ul_text = line.strip("- ").strip()
-    print(ul_text)
-    if not in_list :
-        in_list = True
-        return f"<ul>\n<li>{ul_text}</li>\n"
-    else :
-        return f"<li>{ul_text}</li>\n"    
-    
+
+def convert_unordered_list(line, in_list):
+    ul_text = line.strip("-").strip()
+    if not in_list:
+        return f"<ul>\n\t<li>{ul_text}</li>", True
+    else:
+        return f"\t<li>{ul_text}</li>", True
 
 
 def convert_heading(line):
-        heading_level = line.count("#")
-        heading_text = line.strip("# ").strip()
-        heading = f"<h{heading_level}>{heading_text}</h{heading_level}>"
-        return heading
+    heading_level = line.count("#")
+    heading_text = line.strip("# ").strip()
+    heading = f"<h{heading_level}>{heading_text}</h{heading_level}>"
+    return heading
 
 
 def markdown_file(name, output):
@@ -36,23 +34,23 @@ def markdown_file(name, output):
 
         converted_lines = []
         in_list = False
+
         for line in markdown_lines:
-            print(line)
-            if line.startswith("# ") :
-                print("#")
+            if line.startswith("#"):
+                if in_list:
+                    converted_lines.append("</ul>\n")
+                    in_list = False
                 converted_line = convert_heading(line)
-                converted_lines.append(f"{converted_line}")
-                continue
-            if line.startswith("-") :
-                print("-")
-                converted_line = convert_unordered_list(converted_line,in_list)
-            else :
-                print("else")
-                in_list = False
-                converted_line+="</ul>"
+
+            elif line.startswith("-"):
+                converted_line, in_list = convert_unordered_list(line, in_list)
+
             converted_lines.append(f"{converted_line}\n")
 
-        with open(output, 'a') as file:
+        if in_list:
+            converted_lines.append("</ul>\n")
+            in_list = False
+        with open(output, 'w') as file:
             for line in converted_lines:
                 file.write(line)
 
