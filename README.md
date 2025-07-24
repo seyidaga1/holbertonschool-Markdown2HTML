@@ -1,2 +1,2 @@
-- Hello
-- Bye
+* Hello
+* Bye
