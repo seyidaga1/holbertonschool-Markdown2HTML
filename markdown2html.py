@@ -14,6 +14,7 @@ import sys
 
 def convert_unordered_list(line, in_list):
     ul_text = line.strip("-").strip()
+    print(ul_text)
     if not in_list:
         return f"<ul>\n\t<li>{ul_text}</li>", True
     else:
@@ -41,15 +42,15 @@ def markdown_file(name, output):
                     converted_lines.append("</ul>\n")
                     in_list = False
                 converted_line = convert_heading(line)
+                converted_lines.append(f"{converted_line}\n")
 
             elif line.startswith("-"):
                 converted_line, in_list = convert_unordered_list(line, in_list)
-
-            converted_lines.append(f"{converted_line}\n")
+                converted_lines.append(f"{converted_line}\n")
 
         if in_list:
             converted_lines.append("</ul>\n")
-            in_list = False
+
         with open(output, 'w') as file:
             for line in converted_lines:
                 file.write(line)
