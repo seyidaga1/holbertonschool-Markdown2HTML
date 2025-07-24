@@ -12,29 +12,21 @@ Usage:
 import sys
 
 def convert_unordered_list(line,in_list):
-    
-    ul_line = ""
-    if line.startswith("-") :
-        unordered_list = line.strip("-")
-        if not in_list :
-            ul_line+="<ul>\n"
-            in_list = True
-        ul_line+=f"\t<li>{unordered_list.strip()}</li>\n"
-        return ul_line
+    ul_text = line.strip("- ").strip()
+    print(ul_text)
+    if not in_list :
+        in_list = True
+        return f"<ul>\n<li>{ul_text}</li>\n"
     else :
-        ul_line+="</ul>\n"
-        in_list = False
-
-    return line
+        return f"<li>{ul_text}</li>\n"    
+    
 
 
 def convert_heading(line):
-    if line.startswith("#"):
         heading_level = line.count("#")
         heading_text = line.strip("# ").strip()
         heading = f"<h{heading_level}>{heading_text}</h{heading_level}>"
         return heading
-    return line
 
 
 def markdown_file(name, output):
@@ -45,11 +37,22 @@ def markdown_file(name, output):
         converted_lines = []
         in_list = False
         for line in markdown_lines:
-            converted_line = convert_heading(line)
-            converted_line = convert_unordered_list(converted_line,in_list)
+            print(line)
+            if line.startswith("# ") :
+                print("#")
+                converted_line = convert_heading(line)
+                converted_lines.append(f"{converted_line}")
+                continue
+            if line.startswith("-") :
+                print("-")
+                converted_line = convert_unordered_list(converted_line,in_list)
+            else :
+                print("else")
+                in_list = False
+                converted_line+="</ul>"
             converted_lines.append(f"{converted_line}\n")
 
-        with open(output, 'w') as file:
+        with open(output, 'a') as file:
             for line in converted_lines:
                 file.write(line)
 
