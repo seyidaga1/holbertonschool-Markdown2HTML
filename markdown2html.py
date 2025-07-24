@@ -14,7 +14,6 @@ import sys
 
 def convert_unordered_list(line, in_list):
     ul_text = line.strip("-").strip()
-    print(ul_text)
     if not in_list:
         return f"<ul>\n\t<li>{ul_text}</li>", True
     else:
