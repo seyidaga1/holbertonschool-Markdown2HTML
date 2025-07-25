@@ -12,9 +12,33 @@ Usage:
 import sys
 
 
+def parse_bold_emphasis(text):
+    while True:
+        start = text.find("**")
+        if start == -1:
+            break
+        end = text.find("**", start + 2)
+        if end == -1:
+            break
+        bold_text = text[start + 2:end]
+        text = text[:start] + "<b>" + bold_text + "</b>" + text[end + 2:]
+
+    while True:
+        start = text.find("__")
+        if start == -1:
+            break
+        end = text.find("__", start + 2)
+        if end == -1:
+            break
+        em_text = text[start + 2:end]
+        text = text[:start] + "<em>" + em_text + "</em>" + text[end + 2:]
+
+    return text
+
+
 def convert_p_tag(line, p_tag):
-    """Convert a line to paragraph HTML tags."""
     p_text = line.rstrip('\n')
+    p_text = parse_bold_emphasis(p_text)
     if not p_tag:
         return f"<p>\n{p_text}", True
     else:
@@ -22,8 +46,8 @@ def convert_p_tag(line, p_tag):
 
 
 def convert_ordered_list(line, in_list_ol):
-    """Convert a line to ordered list HTML tags."""
     ol_text = line.strip("*").strip()
+    ol_text = parse_bold_emphasis(ol_text)
     if not in_list_ol:
         return f"<ol>\n\t<li>{ol_text}</li>", True
     else:
@@ -31,8 +55,8 @@ def convert_ordered_list(line, in_list_ol):
 
 
 def convert_unordered_list(line, in_list_ul):
-    """Convert a line to unordered list HTML tags."""
     ul_text = line.strip("-").strip()
+    ul_text = parse_bold_emphasis(ul_text)
     if not in_list_ul:
         return f"<ul>\n\t<li>{ul_text}</li>", True
     else:
@@ -40,15 +64,14 @@ def convert_unordered_list(line, in_list_ul):
 
 
 def convert_heading(line):
-    """Convert a line to heading HTML tags."""
     heading_level = line.count("#")
     heading_text = line.strip("# ").strip()
+    heading_text = parse_bold_emphasis(heading_text)
     heading = f"<h{heading_level}>{heading_text}</h{heading_level}>"
     return heading
 
 
 def markdown_file(name, output):
-    """Convert markdown file to HTML file."""
     try:
         with open(name, 'r') as file:
             markdown_lines = file.readlines()
