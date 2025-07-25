@@ -76,7 +76,8 @@ def markdown_file(name, output):
                 if p_tag:
                     converted_lines.append("</p>\n")
                     p_tag = False
-                converted_line, in_list_ul = convert_unordered_list(line, in_list_ul)
+                converted_line, in_list_ul = convert_unordered_list(line, 
+                                                                    in_list_ul)
                 converted_lines.append(f"{converted_line}\n")
 
             elif line.startswith("*"):
