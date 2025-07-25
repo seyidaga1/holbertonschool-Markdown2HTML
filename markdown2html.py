@@ -87,7 +87,8 @@ def markdown_file(name, output):
                 if p_tag:
                     converted_lines.append("</p>\n")
                     p_tag = False
-                converted_line, in_list_ol = convert_ordered_list(line, in_list_ol)
+                converted_line, in_list_ol = convert_ordered_list(line,
+                                                                  in_list_ol)
                 converted_lines.append(f"{converted_line}\n")
 
             elif stripped == "":
