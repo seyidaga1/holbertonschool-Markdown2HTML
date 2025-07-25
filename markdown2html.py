@@ -133,6 +133,12 @@ def markdown_file(name, output):
                     p_tag = False
 
             else:
+                if in_list_ul:
+                    converted_lines.append("</ul>\n")
+                    in_list_ul = False
+                if in_list_ol:
+                    converted_lines.append("</ol>\n")
+                    in_list_ol = False
                 if not p_tag:
                     converted_line, p_tag = convert_p_tag(line, p_tag)
                     converted_lines.append(f"{converted_line}\n")
