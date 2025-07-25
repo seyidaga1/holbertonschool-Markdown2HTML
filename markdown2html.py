@@ -13,6 +13,7 @@ import sys
 
 
 def convert_p_tag(line, p_tag):
+    """Convert a line to paragraph HTML tags."""
     p_text = line.rstrip('\n')
     if not p_tag:
         return f"<p>\n{p_text}", True
@@ -21,6 +22,7 @@ def convert_p_tag(line, p_tag):
 
 
 def convert_ordered_list(line, in_list_ol):
+    """Convert a line to ordered list HTML tags."""
     ol_text = line.strip("*").strip()
     if not in_list_ol:
         return f"<ol>\n\t<li>{ol_text}</li>", True
@@ -29,6 +31,7 @@ def convert_ordered_list(line, in_list_ol):
 
 
 def convert_unordered_list(line, in_list_ul):
+    """Convert a line to unordered list HTML tags."""
     ul_text = line.strip("-").strip()
     if not in_list_ul:
         return f"<ul>\n\t<li>{ul_text}</li>", True
@@ -37,6 +40,7 @@ def convert_unordered_list(line, in_list_ul):
 
 
 def convert_heading(line):
+    """Convert a line to heading HTML tags."""
     heading_level = line.count("#")
     heading_text = line.strip("# ").strip()
     heading = f"<h{heading_level}>{heading_text}</h{heading_level}>"
@@ -44,6 +48,7 @@ def convert_heading(line):
 
 
 def markdown_file(name, output):
+    """Convert markdown file to HTML file."""
     try:
         with open(name, 'r') as file:
             markdown_lines = file.readlines()
@@ -76,8 +81,9 @@ def markdown_file(name, output):
                 if p_tag:
                     converted_lines.append("</p>\n")
                     p_tag = False
-                converted_line, in_list_ul = convert_unordered_list(line, 
-                                                                    in_list_ul)
+                converted_line, in_list_ul = convert_unordered_list(
+                    line, in_list_ul
+                )
                 converted_lines.append(f"{converted_line}\n")
 
             elif line.startswith("*"):
@@ -87,8 +93,9 @@ def markdown_file(name, output):
                 if p_tag:
                     converted_lines.append("</p>\n")
                     p_tag = False
-                converted_line, in_list_ol = convert_ordered_list(line,
-                                                                  in_list_ol)
+                converted_line, in_list_ol = convert_ordered_list(
+                    line, in_list_ol
+                )
                 converted_lines.append(f"{converted_line}\n")
 
             elif stripped == "":
