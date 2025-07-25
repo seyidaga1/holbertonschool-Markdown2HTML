@@ -10,6 +10,34 @@ Usage:
 """
 
 import sys
+import hashlib
+
+
+def parse_custom_syntax(text):
+    while True:
+        start = text.find("[[")
+        if start == -1:
+            break
+        end = text.find("]]", start + 2)
+        if end == -1:
+            break
+        content = text[start + 2:end]
+        md5_hash = hashlib.md5(content.encode()).hexdigest()
+        text = text[:start] + md5_hash + text[end + 2:]
+
+    # Parse ((...)) to remove all 'c' or 'C'
+    while True:
+        start = text.find("((")
+        if start == -1:
+            break
+        end = text.find("))", start + 2)
+        if end == -1:
+            break
+        content = text[start + 2:end]
+        filtered = ''.join(ch for ch in content if ch.lower() != 'c')
+        text = text[:start] + filtered + text[end + 2:]
+
+    return text
 
 
 def parse_bold_emphasis(text):
@@ -36,9 +64,15 @@ def parse_bold_emphasis(text):
     return text
 
 
+def parse_all(text):
+    text = parse_custom_syntax(text)
+    text = parse_bold_emphasis(text)
+    return text
+
+
 def convert_p_tag(line, p_tag):
     p_text = line.rstrip('\n')
-    p_text = parse_bold_emphasis(p_text)
+    p_text = parse_all(p_text)
     if not p_tag:
         return f"<p>\n{p_text}", True
     else:
@@ -47,7 +81,7 @@ def convert_p_tag(line, p_tag):
 
 def convert_ordered_list(line, in_list_ol):
     ol_text = line.strip("*").strip()
-    ol_text = parse_bold_emphasis(ol_text)
+    ol_text = parse_all(ol_text)
     if not in_list_ol:
         return f"<ol>\n\t<li>{ol_text}</li>", True
     else:
@@ -56,7 +90,7 @@ def convert_ordered_list(line, in_list_ol):
 
 def convert_unordered_list(line, in_list_ul):
     ul_text = line.strip("-").strip()
-    ul_text = parse_bold_emphasis(ul_text)
+    ul_text = parse_all(ul_text)
     if not in_list_ul:
         return f"<ul>\n\t<li>{ul_text}</li>", True
     else:
@@ -66,7 +100,7 @@ def convert_unordered_list(line, in_list_ul):
 def convert_heading(line):
     heading_level = line.count("#")
     heading_text = line.strip("# ").strip()
-    heading_text = parse_bold_emphasis(heading_text)
+    heading_text = parse_all(heading_text)
     heading = f"<h{heading_level}>{heading_text}</h{heading_level}>"
     return heading
 
